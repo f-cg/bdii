@@ -9,7 +9,7 @@
 
 ## 安装配置虚拟机
 
-按 PPT 上安装好虚拟机和 ubuntu 18.04 LTS 并启动。
+安装好虚拟机和 ubuntu 18.04 LTS 并启动。
 
 ## 安装 jdk hadoop 等软件
 
@@ -249,29 +249,28 @@ stop-dfs.sh
 ### 基础网络配置
 
 1.  虚拟机复制
-    将之前配置好的带有伪分布式版Hadoop的Ubuntu系统链接克隆三份，分别为Master、Slave1、Slave2(至少需要一个Master和一个Slave，原虚拟机也需保留，之后其他软件安装时会有用到) ![image](assets/clipboard-1551774928660.png) ![image](assets/clipboard-1551774928793.png) ![image](assets/clipboard-1551774929135.png)
+    将之前配置好的带有伪分布式版Hadoop的Ubuntu系统链接克隆三份，分别为Master、Slave1、Slave2(至少需要一个Master和一个Slave，原虚拟机也需保留，之后其他软件安装时会有用到) 
 
-2. 虚拟机网络配置 VMWare-->编辑-->虚拟网络编辑器-->VMnet8-->更改设置  
+    ![image-20200301163836567](assets/image-20200301163836567.png)![image-20200301163853750](assets/image-20200301163853750.png)
+    
+2. 管理-->全局设定-->网络-->NatNetwork(若没有请添加新的NAT网络)-->编辑NAT网络。
+   ![image-20200301205519153](assets/image-20200301205519153.png)
 
-取消勾选"使用本地DHCP..."，填写子网IP为 `192.168.8.0` 子网掩码为 `255.255.255.0 `
+取消勾选"支持DHCP"，填写网络CIDR为 `192.168.8.0/24` ，确定。
 
-点击NAT设置，填写网关IP为 `192.168.8.2`  确定。
-
-![image](assets/clipboard-1551774929259.png) ![image](assets/clipboard-1551774928855.png) ![image](assets/clipboard-1551774928926.png) 
+![image-20200301164456756](assets/image-20200301164456756.png) 
 
 3. 确保每个虚拟机都是NAT模式以及mac地址互不相同。
 
-   右键虚拟机设置，这里可以更改内存等设置。点击网络适配器，确保网络连接是NAT模式。点击高级，查看mac地址，点击生成可以随机生成一个mac地址防止冲突。
+   选中虚拟机，设置-->网络-->网卡1-->连接方式设为NAT网络，界面名称设为刚才创建的NAT网络名称。MAC地址可以随机生成防止冲突(克隆时已经随机生成了)。
 
-    ![image](assets/clipboard-1551774928965.png) ![image](assets/clipboard-1551774928959.png)
+   ![image-20200301210247656](assets/image-20200301210247656.png)
 
 4. Ubuntu网络配置。
 
- ![image](assets/clipboard-1551774928954.png) ![image](assets/clipboard-1551774929005.png) ![image](assets/clipboard-1551774929322.png)
+ ![image](assets/clipboard-1551774928954.png) ![image](assets/clipboard-1551774929005.png) ![image-20200316201503192](assets/image-20200316201503192.png)
 
 本教程中，三节点的Address分别设置为 192.168.8.100/101/102
-
-*如果你使用的是 Ubuntu系统上的 VirtualBox，那么请[参考文末](#Virtualbox 的说明)*
 
 5. hosts配置 在Master机中，修改主机名,将原名直接替换为“Master”即可。
 
@@ -658,20 +657,4 @@ ssh Slave2 #注意exit回原终端
 ```
 
 成功后就可以继续[配置分布式环境](#分布式环境配置)了
-
-
-
-### Virtualbox 的说明
-
-**Table [Overview of Networking Modes](https://www.virtualbox.org/manual/ch06.html#network_nat_service)**
-
-| **Mode**                  | **VM→Host** | **VM←Host**                                                  | **VM1↔VM2** | **VM→Net/LAN** | **VM←Net/LAN**                                               |
-| ------------------------- | ----------- | ------------------------------------------------------------ | ----------- | -------------- | ------------------------------------------------------------ |
-| Host-only                 | **+**       | **+**                                                        | **+**       | –              | –                                                            |
-| Internal                  | –           | –                                                            | **+**       | –              | –                                                            |
-| Bridged                   | **+**       | **+**                                                        | **+**       | **+**          | **+**                                                        |
-| NAT                       | **+**       | [Port forward](https://www.virtualbox.org/manual/ch06.html#natforward) | –           | **+**          | [Port forward](https://www.virtualbox.org/manual/ch06.html#natforward) |
-| NAT service( NAT network) | **+**       | [Port forward](https://www.virtualbox.org/manual/ch06.html#network_nat_service) | **+**       | **+**          | [Port forward](https://www.virtualbox.org/manual/ch06.html#network_nat_service) |
-
-如果主机是Ubuntu16.04或18.04，那么配置成NAT service会导致vm无法访问外网，这是一个[bug](https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1798813)，所以要想即能虚拟机之间互相访问又能访问外网，只能选择Bridged模式，而这样每次开机后ip可能会变，需要经常修改hosts。
 
