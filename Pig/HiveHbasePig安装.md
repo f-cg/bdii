@@ -25,48 +25,48 @@ start-dfs.sh
 
 ## **HBase**
 
-1.下载，解压，并修改权限
+1. 下载，解压，并修改权限
 
-```sh
-cd ~/Downloads/
-wget https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/stable/hbase-1.4.9-bin.tar.gz
-sudo mkdir /usr/local/hbase
-sudo tar xzvf hbase-1.4.9-bin.tar.gz -C /usr/local/hbase
-sudo chmod -R 755 /usr/local/hbase/hbase-1.4.9
-sudo chown -R alice:alice /usr/local/hbase/hbase-1.4.9
-```
+    ```sh
+    cd ~/Downloads/
+    wget https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/stable/hbase-2.2.5-bin.tar.gz
+    sudo mkdir /usr/local/hbase
+    sudo tar xzvf hbase-2.2.5-bin.tar.gz -C /usr/local/hbase
+    sudo chmod -R 755 /usr/local/hbase
+    sudo chown -R alice:alice /usr/local/hbase
+    ```
 
-2.修改系统配置文件
+2. 修改系统配置文件
 
-```sh
-gedit ~/.bashrc
-```
+    ```sh
+    gedit ~/.bashrc
+    ```
 
-新增如下两行保存
+    新增如下两行保存
 
-```sh
-export HBASE_HOME=/usr/local/hbase/hbase-1.4.9
-export PATH=$PATH:$HBASE_HOME/bin
-```
+    ```sh
+    export HBASE_HOME=/usr/local/hbase/hbase-2.2.5
+    export PATH=$PATH:$HBASE_HOME/bin
+    ```
 
-执行 `source ~/.bashrc`生效。
+    执行 `source ~/.bashrc`生效。
 
-3.修改 HBase 配置文件
+3. 修改 HBase 配置文件
 
-```sh
-gedit /usr/local/hbase/hbase-1.4.9/conf/hbase-env.sh
-```
+    ```sh
+    gedit /usr/local/hbase/hbase-2.2.5/conf/hbase-env.sh
+    ```
 
-找到如下两行，去掉#号并修改
+    找到如下两行，去掉#号并修改
 
-```sh
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-export HBASE_MANAGES_ZK=true
-```
+    ```sh
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    export HBASE_MANAGES_ZK=true
+    ```
 
-再将`/usr/local/hbase/hbase-1.4.9/conf/hbase-site.xml`修改为
+    再将`/usr/local/hbase/hbase-2.2.5/conf/hbase-site.xml`修改为
 
-```xml
+    ```xml
     <configuration>
         <property>
             <name>hbase.rootdir</name>
@@ -81,30 +81,46 @@ export HBASE_MANAGES_ZK=true
             <value>1</value>
         </property>
     </configuration>
-```
+    ```
 
-4.启动 HBase
+4. 启动 HBase
 
-```sh
-/usr/local/hbase/hbase-1.4.9/bin/start-hbase.sh
-```
+    ```sh
+    start-hbase.sh
+    ```
 
-成功后可以用`jps`查看进程，会看到新增了 HMaster、HRegionServer、HQuorumPeer。
+    成功后可以用`jps`查看进程，会看到新增了 HMaster、HRegionServer、HQuorumPeer。
 
-启动 HBase shell：
+    启动 HBase shell：
 
-```sh
-/usr/local/hbase/hbase-1.4.9/bin/hbase shell
-```
+    ```sh
+    hbase shell
+    ```
 
-输入`list`查看所有表。
+5. 增删改查命令
+    在HBase shell中输入以下命令
 
-`exit` 或 ctrl c 退出
+    ```hbase
+    # 创建表的格式：create '表名', '列族名1', '列族名2', '列族名3'
+    create 'tempTable', 'f1', 'f2', 'f3'
+    # 列出所有表的信息
+    list
+    # 向表tempTable中的第r1行、第“f1:c1”列, 添加数据值为“hello,dblab”
+    put 'tempTable', 'r1', 'f1:c1', 'hello, dblab'
+    # 从tempTable中,获取第r1行
+    get 'tempTable', 'r1'
+    # 从tempTable中,获取第r1行列族f1
+    get 'tempTable', 'r1', 'f1'
+    # 从tempTable中,获取第r1行,列族f1中c1列的值
+    get 'tempTable', 'r1', {COLUMN=>'f1:c1'}
+    ```
+
+输入`exit` 或 ctrl c 退出
 
 关闭 HBase 命令：
 
 ```sh
-/usr/local/hbase/hbase-1.4.9/bin/stop-hbase.sh
+stop-hbase.sh
 ```
 
 ---
@@ -115,11 +131,11 @@ export HBASE_MANAGES_ZK=true
 
    ```sh
    cd ~/Downloads
-   wget https://mirrors.tuna.tsinghua.edu.cn/apache/hive/stable-2/apache-hive-2.3.4-bin.tar.gz
+   wget https://mirrors.tuna.tsinghua.edu.cn/apache/hive/stable-2/apache-hive-2.3.7-bin.tar.gz
    sudo mkdir /usr/local/hive
-   sudo tar xzvf apache-hive-2.3.4-bin.tar.gz -C /usr/local/hive
-   sudo chmod -R 755 /usr/local/hive/apache-hive-2.3.4-bin
-   sudo chown -R alice:alice /usr/local/hive/apache-hive-2.3.4-bin
+   sudo tar xzvf apache-hive-2.3.7-bin.tar.gz -C /usr/local/hive
+   sudo chmod -R 755 /usr/local/hive/apache-hive-2.3.7-bin
+   sudo chown -R alice:alice /usr/local/hive/apache-hive-2.3.7-bin
    ```
 
 2. 修改系统配置
@@ -127,7 +143,7 @@ export HBASE_MANAGES_ZK=true
    编辑 `~/.bashrc`新增如下几行
 
    ```sh
-   export HIVE_HOME=/usr/local/hive/apache-hive-2.3.4-bin
+   export HIVE_HOME=/usr/local/hive/apache-hive-2.3.7-bin
    export PATH=$PATH:$HIVE_HOME/bin
    export CLASSPATH=$CLASSPATH:/usr/local/Hadoop/lib/*:.
    export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*:.
@@ -158,7 +174,7 @@ export HBASE_MANAGES_ZK=true
    初始化，
 
    ```sh
-   cd /usr/local/hive/apache-hive-2.3.4-bin/
+   cd /usr/local/hive/apache-hive-2.3.7-bin/
    rm -r metastore_db/
    schematool -dbType derby -initSchema
    ```
@@ -175,7 +191,7 @@ export HBASE_MANAGES_ZK=true
    ./bin/beeline -u jdbc:hive2://localhost:10000
    ```
 
-   查看数据库 ![1553858756668](assets/1553858756668.png)
+   查看数据库![image-20201115155213298](HiveHbasePig安装.assets/image-20201115155213298.png)
 
    `!exit`或 ctrl c 退出 beeline shell。
 
@@ -213,6 +229,7 @@ export HBASE_MANAGES_ZK=true
    ./bin/pig -x mapreduce
    ```
 
-   使用 fs 命令调用 HDFS 的命令![1553857465060](assets/1553857465060.png)
+   使用 fs 命令调用 HDFS 的命令![image-20201115155846491](HiveHbasePig安装.assets/image-20201115155846491.png)
 
    `quit`退出
+
